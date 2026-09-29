@@ -14,6 +14,7 @@
 An interactive decision-making machine for everyday dilemmas:
 
 - 💸 Should I buy this?
+- 💬 Should I text my ex?
 - 🍕 Should I order food?
 - ✈️ Should I go on this trip?
 
