@@ -7,7 +7,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-f7df1e?style=flat-square&logo=javascript&logoColor=111)
 ![AI](https://img.shields.io/badge/AI-none-e50914?style=flat-square)
 
-### 👉 [Try it live](https://lahersoni.github.io/the-advisor/)
+## 👉 [Try it live](https://lahersoni.github.io/the-advisor/)
 
 ## What is it?
 
