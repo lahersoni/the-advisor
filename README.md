@@ -7,6 +7,8 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-f7df1e?style=flat-square&logo=javascript&logoColor=111)
 ![AI](https://img.shields.io/badge/AI-none-e50914?style=flat-square)
 
+### 👉 [Try it live](https://lahersoni.github.io/the-advisor/)
+
 ## What is it?
 
 An interactive decision-making machine for everyday dilemmas:
@@ -15,17 +17,17 @@ An interactive decision-making machine for everyday dilemmas:
 - 🍕 Should I order food?
 - ✈️ Should I go on this trip?
 
-There are 12 case files in total. Your answers change the investigation and the final verdict with stamps, fake statistics and a lot of unnecessary drama.
+There are 12 case files in total. Your answers change the investigation, and the final verdict, with stamps, fake statistics and a lot of unnecessary drama.
 
 No AI. No server. Just vibes and branching questions.
 
 ## What it shows
 
-A single-file branching decision engine with early-exit logic, animated verdicts and zero dependencies, built with vanilla JavaScript.
+A branching decision engine with early-exit logic, animated verdicts and zero dependencies, built with vanilla JavaScript.
 
-## Run
+## Run locally
 
-Open `THE-ADVISOR.html` in your browser. No install needed.
+Download the repo and double-click `index.html`. No install needed.
 
 ## Built with
 
