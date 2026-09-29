@@ -421,21 +421,15 @@ body.outcome-chaos{animation:bodyChaos .12s steps(2,end) 5;}
   display:none !important;
   pointer-events:none !important;
 }
-</style>
 
-
-<style id="final-user-requested-overrides">
-/* Final requested home-page adjustments. */
-.sticker.s1,.sticker.s2,.sticker.s3,.sticker.s4,.sticker.s5,
-header .warning,header .fake-credential{display:none !important;}
-
+/* Final visual cleanup requested for the home page. */
 .workspace{grid-template-columns:1fr !important;}
-.workspace > .panel{width:min(900px,100%);margin-left:auto !important;margin-right:auto !important;box-sizing:border-box;}
-.workspace > aside{display:none !important;}
-
-.tinybar{justify-content:flex-start !important;gap:22px;}
-.tinybar span:first-child{font-size:15px !important;font-weight:900 !important;}
-.tinybar span:nth-child(2){margin-left:auto;white-space:nowrap;}
+.workspace > .panel{width:min(100%,980px) !important;margin-left:auto !important;margin-right:auto !important;}
+.sticker.s1,.sticker.s2,.sticker.s3,.sticker.s4,.sticker.s5,.warning,.fake-credential{display:none !important;}
+.tinybar{justify-content:space-between !important;}
+.tinybar span:first-child{white-space:nowrap;}
+@media(max-width:800px){.tinybar{gap:12px;}.tinybar span:first-child{white-space:normal;}}
+h1{font-weight:900 !important;}
 </style>
 
 </head>
@@ -446,9 +440,6 @@ header .warning,header .fake-credential{display:none !important;}
 <div class="page">
   <div class="sticker s1">⚠ </div>
   <div class="sticker s2"></div>
-  <div class="sticker s3">CERTIFIED BY: NOBODY</div>
-  <div class="sticker s4">100% UNQUALIFIED</div>
-  <div class="sticker s5">VERY SERIOUS WEBSITE™</div>
 
   <header>
     <div class="tinybar">
@@ -457,8 +448,6 @@ header .warning,header .fake-credential{display:none !important;}
     </div>
     <h1><span>How can I</span><span class="accent">HELP?</span></h1>
     <p class="sub">Tell me your dilemma. I will ask an unnecessarily large number of questions and eventually pretend to know what you should do.</p>
-    <div class="warning">⚠ </div>
-    <div class="fake-credential"> &nbsp;|&nbsp; </div>
   </header>
 
   <section class="workspace" id="home">
@@ -486,26 +475,6 @@ header .warning,header .fake-credential{display:none !important;}
       <div class="micro drag-note">↑ You can drag these. They have no purpose whatsoever.</div>
     </div>
 
-    <aside class="panel">
-      <div class="system">
-        <div class="sysbar"><span>[MINIMIZE]</span></div>
-        <div class="sysbody">
-          <b>ADVICE ENGINE STATUS</b>
-          <p>Qualifications detected:</p>
-          <div class="meter"><i></i></div>
-          <p>Confidence:</p>
-          <div class="meter"><i style="animation-delay:.5s"></i></div>
-          <p>Reasoning:</p>
-          <div class="ugly-icons">
-            <div class="ugly-icon">?</div>
-            <div class="ugly-icon">☹</div>
-            <div class="ugly-icon">⚠</div>
-            <div class="ugly-icon">✓</div>
-          </div>
-          <p style="margin-top:15px">SYSTEM MESSAGE: <b>please stop asking it things.</b></p>
-        </div>
-      </div>
-    </aside>
   </section>
 
   <section class="panel" id="case" style="margin-top:25px">
