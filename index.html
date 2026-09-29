@@ -73,10 +73,7 @@
     border-bottom:2px dashed #111;
     padding-bottom:8px;
   }
-  .tinybar .brand-group{display:flex;align-items:baseline;min-width:0;white-space:nowrap;}
-  .tinybar .product-name{font-size:20px;font-weight:900;letter-spacing:1.5px;}
-  .tinybar .department-name{font-size:12px;}
-  .tinybar .online-status{color:var(--red);margin-left:auto;white-space:nowrap;}
+  .tinybar span:nth-child(2){color:var(--red)}
   h1{
     margin:12px 0 0;
     font-family: Georgia, serif;
@@ -107,15 +104,10 @@
   .workspace{
     margin-top:35px;
     display:grid;
-    grid-template-columns:1fr;
+    grid-template-columns:1.25fr .75fr;
     gap:22px;
     align-items:start;
     position:relative;
-  }
-  .workspace > .panel:first-child{
-    width:min(900px,100%);
-    margin-left:auto;
-    margin-right:auto;
   }
   .panel{
     background:#fff;
@@ -431,6 +423,17 @@ body.outcome-chaos{animation:bodyChaos .12s steps(2,end) 5;}
 }
 </style>
 
+
+<style id="actual-requested-fixes">
+/* Requested UI fixes — keep the existing design and functionality unchanged. */
+.workspace{grid-template-columns:1fr !important;}
+.panel{width:min(100%,900px) !important;margin-left:auto !important;margin-right:auto !important;}
+.tinybar{justify-content:flex-start !important;}
+.tinybar > span:first-child{display:block !important;font-size:17px !important;font-weight:900 !important;letter-spacing:1.2px !important;}
+.tinybar > span:nth-child(2){display:none !important;}
+.sticker.s1,.sticker.s2,.sticker.s3,.sticker.s4,.sticker.s5,.warning,.fake-credential{display:none !important;}
+.system{display:none !important;}
+</style>
 </head>
 <body>
 
@@ -440,8 +443,7 @@ body.outcome-chaos{animation:bodyChaos .12s steps(2,end) 5;}
 
   <header>
     <div class="tinybar">
-      <span class="brand-group"><span class="product-name">THE ADVISOR</span><span class="department-name"> / UNLICENSED OPINION DEPARTMENT</span></span>
-      <span class="online-status">● ONLINE (unfortunately)</span>
+      <span>THE ADVISOR / UNLICENSED OPINION DEPARTMENT</span>
     </div>
     <h1><span>How can I</span><span class="accent">HELP?</span></h1>
     <p class="sub">Tell me your dilemma. I will ask an unnecessarily large number of questions and eventually pretend to know what you should do.</p>
@@ -472,6 +474,9 @@ body.outcome-chaos{animation:bodyChaos .12s steps(2,end) 5;}
       <div class="micro drag-note">↑ You can drag these. They have no purpose whatsoever.</div>
     </div>
 
+    <aside class="panel">
+  
+    </aside>
   </section>
 
   <section class="panel" id="case" style="margin-top:25px">
