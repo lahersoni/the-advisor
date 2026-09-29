@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ADVISOR — Absolutely Unqualified</title>
+<style>
+  * { box-sizing: border-box; }
+  :root{
+    --red:#e50914;
+    --ink:#111;
+    --paper:#f7f5ef;
+    --yellow:#ffe600;
+    --blue:#b8d8ff;
+    --green:#b9f6a5;
+  }
+  body{
+    margin:0;
+    min-height:100vh;
+    
+    color:var(--ink);
+    background:var(--paper);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x:hidden;
+  }
+  button,input{font:inherit}
+  button{cursor:pointer}
+  .page{
+    width:min(1180px,94vw);
+    margin:0 auto;
+    padding:22px 0 90px;
+    position:relative;
+  }
+
+  /* intentionally questionable decoration */
+  .sticker{
+    position:absolute;
+    z-index:8;
+    border:3px solid #111;
+    background:#fff;
+    padding:7px 11px;
+    font-weight:900;
+    box-shadow:5px 5px 0 #111;
+    transform:rotate(-5deg);
+    font-size:12px;
+    letter-spacing:.5px;
+    user-select:none;
+    pointer-events:none;
+  }
+  .s1{left:auto;right:22px;top:88px;transform:rotate(4deg)}
+  .s2{right:0;top:155px;transform:rotate(7deg);background:var(--yellow)}
+  .s3{left:2%;top:365px;transform:rotate(3deg);background:var(--green)}
+  .s4{right:7%;top:510px;transform:rotate(-8deg);background:#fff}
+  .s5{left:43%;top:40px;transform:rotate(2deg);background:#111;color:#fff}
+
+  header{
+    border:4px solid #111;
+    background:white;
+    padding:18px 22px 15px;
+    box-shadow:10px 10px 0 #111;
+    transform:rotate(-.7deg);
+    position:relative;
+    z-index:3;
+  }
+  .tinybar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    border-bottom:2px dashed #111;
+    padding-bottom:8px;
+  }
+  .tinybar span:nth-child(2){color:var(--red)}
+  h1{
+    margin:12px 0 0;
+    font-family: Georgia, serif;
+    font-size:clamp(54px,9vw,112px);
+    line-height:.76;
+    letter-spacing:-6px;
+    max-width:850px;
+  }
+  h1 span{display:block}
+  h1 .accent{color:var(--red); margin-left:85px}
+  .sub{
+    margin:22px 0 2px;
+    max-width:600px;
+    font-size:18px;
+    font-weight:700;
+  }
+  .warning{
+    display:inline-block;
+    margin-top:9px;
+    border:2px solid #111;
+    padding:5px 8px;
+    background:#ffe600;
+    font-family:monospace;
+    font-size:12px;
+    transform:rotate(-2deg);
+  }
+
+  .workspace{
+    margin-top:35px;
+    display:grid;
+    grid-template-columns:1.25fr .75fr;
+    gap:22px;
+    align-items:start;
+    position:relative;
+  }
+  .panel{
+    background:#fff;
+    border:4px solid #111;
+    box-shadow:8px 8px 0 #111;
+    padding:20px;
+    position:relative;
+  }
+  .panel h2{
+    font-family:Georgia,serif;
+    margin:0 0 10px;
+    font-size:31px;
+  }
+  .label{
+    display:block;
+    font-family:monospace;
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    margin:13px 0 6px;
+  }
+  textarea{
+    width:100%;
+    min-height:105px;
+    border:3px solid #111;
+    padding:13px;
+    resize:vertical;
+    outline:none;
+    background:#fffdf7;
+  }
+  textarea:focus{box-shadow:5px 5px 0 var(--red)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{
+    border:3px solid #111;
+    background:var(--red);
+    color:#fff;
+    font-weight:900;
+    padding:11px 17px;
+    box-shadow:4px 4px 0 #111;
+    transition:.12s;
+  }
+  .btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #111}
+  .btn.secondary{background:#fff;color:#111}
+  .btn.yellow{background:var(--yellow);color:#111}
+  .btn.danger{background:#111;color:#fff}
+  .micro{
+    font-family:monospace;
+    font-size:11px;
+    margin-top:9px;
+    color:#555;
+  }
+
+  /* ugly fake system panel */
+  .system{
+    min-height:285px;
+    background:#d8d8d8;
+    border:3px solid #111;
+    padding:0;
+    overflow:hidden;
+    transform:rotate(1.2deg);
+  }
+  .sysbar{
+    background:#111;color:#fff;
+    padding:7px 9px;
+    font:900 11px monospace;
+    display:flex;justify-content:space-between;
+  }
+  .sysbody{padding:14px;font-family:monospace;font-size:12px}
+  .meter{height:17px;border:2px solid #111;background:white;margin:7px 0 14px}
+  .meter i{display:block;height:100%;background:var(--red);width:7%;animation:meter 2s infinite alternate}
+  @keyframes meter{to{width:93%}}
+  .ugly-icons{display:flex;gap:10px;margin-top:15px}
+  .ugly-icon{
+    width:52px;height:52px;border:3px solid #111;background:#fff;
+    display:grid;place-items:center;font-size:28px;
+    box-shadow:3px 3px 0 #111;
+  }
+
+  /* falling junk */
+  .junk{
+    position:fixed;
+    top:-50px;
+    z-index:20;
+    pointer-events:none;
+    font-weight:900;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(-50px) rotate(0deg)}
+    100%{transform:translateY(110vh) rotate(720deg)}
+  }
+
+  /* advice case */
+  #case{display:none}
+  .case-top{
+    display:flex;justify-content:space-between;gap:15px;align-items:center;
+    border-bottom:3px dashed #111;padding-bottom:12px;
+  }
+  .case-number{font:900 12px monospace}
+  .evidence{
+    margin-top:15px;
+    border:3px solid #111;
+    background:#f0f0f0;
+    min-height:170px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .evidence img{max-width:100%;max-height:260px;display:none}
+  .evidence .empty{font-family:monospace;font-size:12px}
+  .question{
+    margin-top:20px;
+    border:4px solid #111;
+    padding:18px;
+    background:#fff;
+    box-shadow:6px 6px 0 #111;
+  }
+  .qtag{font:900 11px monospace;color:var(--red)}
+  .question h3{font:Georgia,serif;font-size:35px;margin:8px 0 17px}
+  .answer-area{min-height:80px;margin-top:17px}
+  .dynamic-options{display:flex;flex-wrap:wrap;gap:10px}
+  .option-btn{border:3px solid #111;background:#fff;color:#111;font-weight:900;padding:13px 18px;box-shadow:4px 4px 0 #111;transition:.12s;min-width:150px}
+  .option-btn:hover{transform:translate(-3px,-3px) rotate(-1deg);box-shadow:7px 7px 0 #111;background:var(--yellow)}
+  .option-btn[data-tone="positive"]{background:var(--green)}
+  .option-btn[data-tone="negative"]{background:#fff}
+  .option-btn[data-tone="chaos"]{background:var(--yellow)}
+  .option-btn[data-tone="red"]{background:var(--red);color:#fff}
+  .response{
+    border:3px solid #111;
+    padding:16px;
+    background:var(--yellow);
+    font-weight:900;
+    font-size:18px;
+    transform:rotate(-1deg);
+  }
+  .response small{display:block;font:12px monospace;margin-top:8px}
+  .verdict{
+    margin-top:20px;
+    border:5px solid #111;
+    padding:22px;
+    background:#fff;
+    display:none;
+    box-shadow:10px 10px 0 var(--red);
+  }
+  .verdict h2{font:900 50px Georgia,serif;margin:0}
+  .percent{font-size:75px;font-weight:900;color:var(--red);line-height:1}
+  .fakechart{height:25px;border:3px solid #111;margin:10px 0;background:#fff}
+  .fakechart i{display:block;height:100%;background:#111;width:88%}
+
+  /* draggable nonsense */
+  .junkbox{
+    position:relative;
+    height:180px;
+    margin-top:18px;
+    border:3px dashed #111;
+    background:#f1eee6;
+    overflow:hidden;
+  }
+  .drag{
+    position:absolute;
+    border:3px solid #111;
+    padding:8px 10px;
+    background:#fff;
+    font-weight:900;
+    box-shadow:4px 4px 0 #111;
+    cursor:grab;
+    user-select:none;
+    pointer-events:auto;
+    touch-action:none;
+  }
+  .drag:active{cursor:grabbing}
+  .d1{left:15px;top:20px}.d2{left:180px;top:85px;background:var(--yellow)}.d3{left:360px;top:25px;background:var(--green)}
+
+  /* fake popup */
+  .popup{
+    position:fixed;
+    z-index:100;
+    width:min(370px,88vw);
+    background:#fff;
+    border:4px solid #111;
+    box-shadow:12px 12px 0 #111;
+    padding:0;
+    display:none;
+  }
+  .popup-head{background:#111;color:#fff;padding:8px 10px;font:900 12px monospace}
+  .popup-body{padding:18px}
+  .popup-body h3{font:900 26px Georgia,serif;margin:0 0 9px}
+  .popup-body p{font-size:13px;line-height:1.45}
+  .popup .x{float:right;border:2px solid #fff;background:#111;color:#fff;width:22px;height:22px}
+
+  /* runaway */
+  #runaway{position:relative}
+  .runaway-wrap{position:relative;display:inline-block}
+  #noBtn{position:relative}
+
+  footer{
+    margin-top:35px;
+    border-top:3px solid #111;
+    padding-top:10px;
+    font:11px monospace;
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  }
+
+
+  /* scenario selector */
+  .case-library{
+    margin-top:18px;
+    border:3px dashed #111;
+    background:#fffdf7;
+    padding:12px;
+    position:relative;
+    transform:rotate(.35deg);
+  }
+  .drag-note{font-size:14px;font-weight:900;color:#111}
+  .library-title{font-size:18px;font-weight:900;font:900 12px monospace;text-transform:uppercase;margin-bottom:9px}
+  .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .scenario-card{
+    border:2px solid #111;background:#fff;padding:9px 10px;text-align:left;
+    font-size:12px;font-weight:900;box-shadow:3px 3px 0 #111;
+    transition:.12s;min-height:58px;
+  }
+  .scenario-card:hover{transform:translate(-2px,-2px) rotate(var(--r));box-shadow:6px 6px 0 #111;background:var(--yellow)}
+  .scenario-card:nth-child(3n){--r:1deg}.scenario-card:nth-child(3n+1){--r:-1deg}.scenario-card:nth-child(3n+2){--r:.7deg}
+  .scenario-card small{display:block;font:10px monospace;margin-top:4px;color:#666}
+  .response-wrap{min-height:82px;margin-top:17px}
+  .response.pop{animation:popResponse .35s cubic-bezier(.2,1.4,.3,1)}
+  @keyframes popResponse{0%{opacity:0;transform:translateY(12px) rotate(-5deg) scale(.92)}100%{opacity:1;transform:translateY(0) rotate(-1deg) scale(1)}}
+  .question.enter{animation:questionIn .45s cubic-bezier(.2,1.2,.3,1)}
+  @keyframes questionIn{0%{opacity:0;transform:translateX(35px) rotate(2deg)}100%{opacity:1;transform:translateX(0) rotate(0)}}
+  .thinking{font:900 13px monospace;display:inline-block;padding:9px 12px;border:2px solid #111;background:#eee;animation:blink .55s steps(2) infinite}
+  @keyframes blink{50%{opacity:.25}}
+  .cover-chaos{
+    position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
+    background:#e50914;color:#fff;pointer-events:none;overflow:hidden;
+  }
+  .cover-chaos.show{display:flex}
+  .cover-chaos::before,.cover-chaos::after{content:'FINE. DO WHATEVER YOU WANT.';position:absolute;font:900 clamp(30px,7vw,100px)/.8 Arial,sans-serif;white-space:nowrap;transform:rotate(-12deg);opacity:.16}
+  .cover-chaos::after{transform:rotate(12deg);opacity:.1}
+  .chaos-text{font:900 clamp(42px,10vw,150px)/.8 Georgia,serif;text-align:center;max-width:95vw;text-transform:uppercase;animation:chaosPulse .3s infinite alternate}
+  .chaos-text small{display:block;font:900 14px monospace;margin-top:24px;letter-spacing:3px}
+  @keyframes chaosPulse{from{transform:scale(.96) rotate(-2deg)}to{transform:scale(1.03) rotate(2deg)}}
+
+  .fake-credential{display:inline-block;margin:10px 0 0;border:2px solid #111;padding:5px 8px;background:#fff;font:900 11px monospace;transform:rotate(1deg);box-shadow:3px 3px 0 #111}
+  .case-number strong{color:var(--red)}
+  .processing{
+    position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;
+    background:rgba(247,245,239,.94);padding:20px;
+  }
+  .processing.show{display:flex}
+  .processing-card{width:min(650px,92vw);border:5px solid #111;background:#fff;padding:24px;box-shadow:14px 14px 0 #111;transform:rotate(-1deg)}
+  .processing-title{font:900 clamp(28px,6vw,58px)/.9 Georgia,serif;margin-bottom:15px}
+  .process-line{font:900 13px monospace;margin:8px 0;padding:8px 10px;border:2px solid #111;background:#eee;display:flex;justify-content:space-between}
+  .process-line.done{background:var(--green)}
+  .process-line.bad{background:#ffd4d4}
+  .process-spinner{display:inline-block;width:14px;height:14px;border:3px solid #111;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .custom-note{margin-top:8px;font:10px monospace;color:#555}
+  .case-stamp{position:absolute;right:18px;top:48px;border:3px solid var(--red);color:var(--red);padding:6px 9px;font:900 12px monospace;transform:rotate(7deg)}
+  .case-stamp small{display:block;color:#111;font-size:9px;margin-top:2px}
+  .custom-result{border:4px solid #111;background:#fff;padding:22px;box-shadow:8px 8px 0 #111;margin-top:20px;display:none}
+  .custom-result h2{font:900 42px Georgia,serif;margin:0 0 8px}
+  .custom-result p{font-weight:800}
+  .fake-stats{font:900 11px monospace;border-top:2px dashed #111;margin-top:14px;padding-top:10px;display:grid;gap:5px}
+
+  @media(max-width:800px){.scenario-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:800px){
+    .workspace{grid-template-columns:1fr}
+    h1{letter-spacing:-3px}.s1,.s2,.s3,.s4,.s5{display:none}
+  }
+</style>
+
+<style id="advisor-outcome-effects">
+.outcome-stamp{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9998;pointer-events:none;opacity:0;transform:scale(.7) rotate(-8deg);font-family:Impact,Arial Black,sans-serif;font-size:clamp(64px,13vw,180px);font-weight:900;letter-spacing:-4px;text-shadow:7px 7px 0 #111;border:0;}
+.outcome-stamp.show{animation:stampIn .65s cubic-bezier(.2,1.4,.4,1) forwards;}
+.outcome-stamp.approved{color:#fff;background:rgba(40,170,70,.28);}
+.outcome-stamp.caution{color:#111;background:rgba(255,215,45,.34);}
+.outcome-stamp.denied{color:#fff;background:rgba(229,9,20,.32);}
+.outcome-stamp.chaos{color:#fff;background:#111;animation:chaosIn .55s steps(2,end) forwards;}
+body.outcome-approved{animation:approvedFlash .35s ease 2;}
+body.outcome-caution{animation:cautionFlash .45s ease 2;}
+body.outcome-denied{animation:deniedFlash .11s steps(2,end) 5;}
+@keyframes approvedFlash{50%{background:#dff6d8}}
+@keyframes cautionFlash{50%{background:#fff2a6}}
+@keyframes deniedFlash{50%{background:#ffd0d0}}
+@keyframes stampIn{0%{opacity:0;transform:scale(1.5) rotate(-12deg)}70%{opacity:1;transform:scale(.96) rotate(3deg)}100%{opacity:1;transform:scale(1) rotate(-2deg)}}
+@keyframes chaosIn{0%{opacity:0;transform:translateX(-8px)}25%{opacity:1;transform:translateX(8px)}50%{transform:translateX(-8px)}75%{transform:translateX(8px)}100%{opacity:1;transform:translateX(0)}}
+body.outcome-chaos{animation:bodyChaos .12s steps(2,end) 5;}
+@keyframes bodyChaos{50%{filter:invert(1)}}
+.audit-overlay{position:fixed;inset:0;background:#f5f0e6;display:flex;align-items:center;justify-content:center;z-index:9997;opacity:0;pointer-events:none;transition:opacity .2s;}
+.audit-overlay.show{opacity:1;pointer-events:auto;}
+.audit-text{font:900 clamp(28px,5vw,64px)/1.05 monospace;text-align:center;max-width:900px;padding:30px;}
+.audit-small{display:block;font-size:.42em;margin-top:22px;}
+</style>
+</head>
+<body>
+
+<div id="junkLayer"></div>
+
+<div class="page">
+  <div class="sticker s1">⚠ QUESTIONABLE ADVICE</div>
+  <div class="sticker s2">DO NOT SUE US</div>
+  <div class="sticker s3">CERTIFIED BY: NOBODY</div>
+  <div class="sticker s4">100% UNQUALIFIED</div>
+  <div class="sticker s5">VERY SERIOUS WEBSITE™</div>
+
+  <header>
+    <div class="tinybar">
+      <span>THE ADVISOR / UNLICENSED OPINION DEPARTMENT</span>
+      <span>● ONLINE (unfortunately)</span>
+    </div>
+    <h1><span>How can I</span><span class="accent">HELP?</span></h1>
+    <p class="sub">Tell me your dilemma. I will ask an unnecessarily large number of questions and eventually pretend to know what you should do.</p>
+    <div class="warning">⚠ WARNING: This website has absolutely no qualifications.</div>
+    <div class="fake-credential">CERTIFIED IN: NOTHING™ &nbsp;|&nbsp; PEER REVIEW: DENIED</div>
+  </header>
+
+  <section class="workspace" id="home">
+    <div class="panel">
+      <h2>Submit your terrible little dilemma.</h2>
+      <label class="label">What are we overthinking today?</label>
+      <textarea id="dilemma" placeholder="e.g. Shall I buy this green top?"></textarea>
+
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="submitBtn">ASK THE ADVISOR →</button>
+      </div>
+      <div class="micro">No AI. No expertise. Just vibes, branching questions and fake statistics.</div>
+      <div class="custom-note">⚠ If your dilemma is not in the database, the Advisor will still pretend to have an opinion.</div>
+
+      <div class="case-library">
+        <div class="library-title">POPULAR CASE FILES — because apparently you people need supervision</div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </div>
+
+      <div class="junkbox" id="junkbox">
+        <div class="drag d1" data-vx="0" data-vy="0">MOVE ME</div>
+        <div class="drag d2" data-vx="0" data-vy="0">WHY AM I HERE?</div>
+        <div class="drag d3" data-vx="0" data-vy="0">DRAG ME, COWARD</div>
+      </div>
+      <div class="micro drag-note">↑ You can drag these. They have no purpose whatsoever.</div>
+    </div>
+
+    <aside class="panel">
+      <div class="system">
+        <div class="sysbar"><span>ADVISOR.EXE</span><span>[MINIMIZE]</span></div>
+        <div class="sysbody">
+          <b>ADVICE ENGINE STATUS</b>
+          <p>Qualifications detected:</p>
+          <div class="meter"><i></i></div>
+          <p>Confidence:</p>
+          <div class="meter"><i style="animation-delay:.5s"></i></div>
+          <p>Reasoning:</p>
+          <div class="ugly-icons">
+            <div class="ugly-icon">?</div>
+            <div class="ugly-icon">☹</div>
+            <div class="ugly-icon">⚠</div>
+            <div class="ugly-icon">✓</div>
+          </div>
+          <p style="margin-top:15px">SYSTEM MESSAGE: <b>please stop asking it things.</b></p>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="panel" id="case" style="margin-top:25px">
+    <div class="case-top">
+      <div>
+        <div class="case-number">CASE FILE <strong id="caseNumber">#0001</strong> — DILEMMA DETECTED</div>
+        <div class="case-stamp">VERY OFFICIAL<small>probably</small></div>
+        <h2 style="margin:5px 0 0">Okay. But first...</h2>
+      </div>
+      <button class="btn secondary" id="backBtn">← BACK</button>
+    </div>
+
+    <p id="caseText" style="font-weight:800"></p>
+
+    <div class="question" id="questionBox">
+      <div class="qtag">QUESTION 01 / FINANCIAL INVESTIGATION</div>
+      <h3 id="questionText">Do you have money to buy this?</h3>
+      <div class="answer-area" id="answerArea"></div>
+    </div>
+
+    <div class="verdict" id="verdict">
+      <div class="qtag">FINAL VERDICT</div>
+      <h2 id="verdictTitle">CONGRATULATIONS.</h2>
+      <div class="percent" id="percent">88%</div>
+      <p id="verdictText">My completely imaginary statistics suggest this is worth buying.</p>
+      <div class="fakechart"><i id="chartFill"></i></div>
+      <div class="row">
+        <button class="btn" id="againBtn">ASK ANOTHER STUPID QUESTION ↻</button>
+        <button class="btn yellow" id="sureBtn">NOT SATISFIED WITH VERDICT</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>THE ADVISOR © 2026 — PEER REVIEWED BY A FRIEND OF A FRIEND</span>
+    <span>accuracy: legally unspecified</span>
+  </footer>
+</div>
+
+<div class="cover-chaos" id="coverChaos" aria-hidden="true">
+  <div class="chaos-text">FINE.<br>DO WHATEVER<br>YOU WANT.<small>THE ADVISOR HAS LEFT THE BUILDING.</small></div>
+</div>
+
+<div class="processing" id="processing" aria-hidden="true">
+  <div class="processing-card">
+    <div class="processing-title">CONSULTING THE ADVISORY BOARD...</div>
+    <div id="processLines"></div>
+  </div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-head">
+    <button class="x" id="popupClose">×</button>
+    ADVISOR SYSTEM ERROR
+  </div>
+  <div class="popup-body">
+    <h3 id="popupTitle">Critical Thinking Failed.</h3>
+    <p id="popupText">The Advisor has encountered an opinion it was not emotionally prepared for.</p>
+    <button class="btn danger" id="popupOkay">OK I GUESS</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const dilemma = $('#dilemma');
+const caseSection = $('#case');
+const home = $('#home');
+const answerArea = $('#answerArea');
+const questionText = $('#questionText');
+
+let q = 1;
+let choice = null;
+let uploaded = false;
+let activeScenario = 'clothing';
+let pendingNext = null;
+let answerTimer = null;
+let currentStep = null;
+let clothingPath = null;
+let caseCounter = 1;
+let customDilemma = false;
+let processingTimer = null;
+let pendingFinish = null;
+let finalCheckIndex = 0;
+let finalScoreAdjust = 0;
+let scenarioAnswers = [];
+let currentQuestionIndex = 0;
+
+const funnyErrors = [
+  ["WARNING: BAD IDEA DETECTED.", "You have successfully entered a situation that could have been avoided by simply not doing it."],
+  ["404: COMMON SENSE NOT FOUND.", "Please restart your brain and try again."],
+  ["CRITICAL THINKING FAILED.", "The Advisor has requested a snack before continuing."],
+  ["UNNECESSARY DRAMA DETECTED.", "This dilemma has been escalated to absolutely nobody."],
+  ["SYSTEM OVERTHINKING.", "We could answer this normally, but where's the fun in that?"]
+];
+
+function showPopup(){
+  const item = funnyErrors[Math.floor(Math.random()*funnyErrors.length)];
+  $('#popupTitle').textContent=item[0];
+  $('#popupText').textContent=item[1];
+  const p=$('#popup');
+  p.style.display='block';
+  p.style.left=(Math.random()*55+20)+'vw';
+  p.style.top=(Math.random()*35+15)+'vh';
+  p.animate(
+    [{transform:'rotate(-4deg) scale(.7)'},{transform:'rotate(3deg) scale(1.05)'},{transform:'rotate(-1deg) scale(1)'}],
+    {duration:500,easing:'cubic-bezier(.2,1.6,.3,1)'}
+  );
+}
+$('#popupClose').onclick=()=>$('#popup').style.display='none';
+$('#popupOkay').onclick=()=>$('#popup').style.display='none';
+
+function dropJunk(){
+  const items=["NO","WHY","404","???","ERROR","OK","HUH","OOPS","THINK","REALLY?","HMM","!!!"];
+  for(let i=0;i<8;i++){
+    const e=document.createElement('div');
+    e.className='junk';
+    e.textContent=items[Math.floor(Math.random()*items.length)];
+    e.style.left=Math.random()*98+'vw';
+    e.style.fontSize=(12+Math.random()*28)+'px';
+    e.style.animationDuration=(2.5+Math.random()*3)+'s';
+    e.style.transform=`rotate(${Math.random()*90-45}deg)`;
+    e.style.background=Math.random()>.5?'#ffe600':'#fff';
+    e.style.border='2px solid #111';
+    e.style.padding='4px';
+    $('#junkLayer').appendChild(e);
+    setTimeout(()=>e.remove(),6000);
+  }
+}
+setInterval(()=>dropJunk(),12000);
+
+
+/* STRICT RULE: Every Advisor question must be answerable with YES or NO and must represent ONE proposition. */
+const scenarios = {
+  clothing:{
+    label:'💸 Should I buy this?', short:'clothing investigation', photo:true,
+    intro:'A purchase has entered evidence. We will now determine whether this is a sensible purchase or simply attractive fabric.',
+    questions:[
+      {tag:'QUESTION 01 / MONEY DEPARTMENT',text:'Do you have enough money to buy this without regretting it later?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','red',-5]}},
+      {tag:'QUESTION 02 / CLOSET FORENSICS',text:'Do you already own something similar?',type:'yesno',options:{yes:['YES','negative',-3],no:['NO','positive',2]}},
+      {tag:'QUESTION 03 / WEARABILITY TEST',text:'Will you actually use or wear this enough to justify buying it?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-4]}},
+      {tag:'QUESTION 04 / IMPULSE CONTROL',text:'Have you wanted this for a while rather than suddenly wanting it today?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','chaos',-2]}}
+    ],
+    evaluate(a){
+      if(a[0]==='no' || a[2]==='no') return {tone:'red',title:'PURCHASE DENIED.',percent:18,message:"You don't have the money or you don't actually plan to use the thing. The Advisor has located the emergency brake and pulled it."};
+      if(a[0]==='yes'&&a[1]==='no'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'APPROVED.',percent:94,message:'Against all odds, you have presented a financially responsible argument for once. Purchase authorization: GRANTED. Please do not tell your bank account we approved this.'};
+      if(a[0]==='yes'&&a[1]==='yes'&&a[2]==='yes') return {tone:'yellow',title:'PROCEED WITH CAUTION.',percent:63,message:'You can afford it and you may use it, but your closet already contains its cousin. The Advisor is not stopping you. The closet, however, has questions.'};
+      return {tone:'yellow',title:'SUSPICIOUSLY PLAUSIBLE.',percent:71,message:'This is not an obviously terrible purchase. It is simply a purchase that requires you to remember you are the person paying for it.'};
+    }
+  },
+
+  extext:{
+    label:'💔 Should I text my ex?', short:'emotional damage department',
+    intro:'A former relationship has been detected. Please place your dignity on the table for examination.',
+    questions:[
+      {tag:'QUESTION 01 / MEMORY DEPARTMENT',text:'What are you actually missing?',type:'choice',options:{person:['THE PERSON','positive',2],life:['THE LIFE WE HAD','negative',-1],unknown:["I DON'T KNOW",'chaos',0]}},
+      {tag:'QUESTION 02 / RESTART PROTOCOL',text:'If they texted you right now, would you genuinely want to restart things?',type:'choice',options:{yes:['YES','positive',2],no:['NO','negative',-2],panic:['PANIC','chaos',0]}},
+      {tag:'QUESTION 03 / RELATIONSHIP AUDIT',text:'Was the relationship actually good for you?',type:'choice',options:{yes:['YES','positive',2],no:['NO','negative',-3],complicated:['IT’S COMPLICATED','chaos',-1]}},
+      {tag:'QUESTION 04 / CONSEQUENCE CHECK',text:'Could you handle sending the message and getting no reply?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-3]}}
+    ],
+    evaluate(a){
+      if(a[1]==='no' && a[2]==='no') return {tone:'yellow',title:'OH. THAT’S A MEMORY.',percent:74,message:"You don't really want the relationship back, and the relationship wasn't good for you. You may miss the chapter without reopening the book."};
+      if(a[0]==='person'&&a[1]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'THE PLOT THICKENS.',percent:89,message:'You may have an actual case here. The Advisor has reluctantly upgraded this from “late-night emotional nonsense” to “worth thinking about.” Proceed carefully.'};
+      if(a[0]==='life'&&a[1]==='no'&&a[2]==='no') return {tone:'yellow',title:'OH.',percent:81,message:'You do not miss the relationship. You miss having someone to send stupid screenshots to. Your ex has been demoted to nostalgic character from Season 2.'};
+      if(a[3]==='no') return {tone:'red',title:'DO NOT TEXT TONIGHT.',percent:24,message:'You are asking a fragile emotional situation to survive an outcome you already know you cannot handle. Put the phone down. Future You can revisit this.'};
+      return {tone:'yellow',title:'EMOTIONAL WEATHER: UNCLEAR.',percent:58,message:'There are real feelings here, but the evidence is not clean enough for a dramatic comeback montage. Wait, think and do not text purely because you are lonely.'};
+    }
+  },
+
+  skip:{
+    label:'💀 Should I skip class today?', short:'attendance department',
+    intro:'Attendance has entered the courtroom. The Advisor is pretending to understand university policy.',
+    questions:[
+      {tag:'QUESTION 01 / ATTENDANCE',text:'Is attendance actually important today?',type:'yesno',options:{yes:['YES','negative',-3],no:['NO','positive',2]}},
+      {tag:'QUESTION 02 / BUFFER CHECK',text:'Do you have enough attendance to survive one absence?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','red',-4]}},
+      {tag:'QUESTION 03 / ACADEMIC DAMAGE',text:'Would you miss something genuinely important by skipping?',type:'yesno',options:{yes:['YES','negative',-3],no:['NO','positive',2]}},
+      {tag:'QUESTION 04 / ENERGY AUDIT',text:'Do you actually need the break today rather than simply not feeling like going?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}}
+    ],
+    evaluate(a){
+      if(a[0]==='yes'&&a[1]==='no') return {tone:'red',title:'ATTENDANCE HAS OBJECTED.',percent:16,message:'Your attendance is already in survival mode and today is apparently important. The Advisor recommends appearing physically in class.'};
+      if(a[0]==='no'&&a[1]==='yes'&&a[2]==='no'&&a[3]==='yes') return {tone:'green',title:'SKIP APPROVED.',percent:91,message:'No attendance crisis. No important material. You actually need the break. The Advisor has signed the world’s least official leave application.'};
+      if(a[2]==='yes') return {tone:'yellow',title:'THE CLASS HAS A CASE.',percent:68,message:'You may survive the absence, but you would be skipping something that matters. That is not exactly the same thing as a free day.'};
+      if(a[3]==='no') return {tone:'yellow',title:'YOU JUST DON’T FEEL LIKE IT.',percent:55,message:'Valid emotion. Weak legal argument. If there is no real reason to skip, the Advisor cannot manufacture one for you.'};
+      return {tone:'yellow',title:'ONE DAY OFF IS NOT A CRIME.',percent:72,message:'The evidence is reasonably friendly to a skip. Just make sure “I needed a break” does not become a seven-day documentary.'};
+    }
+  },
+
+  askout:{
+    label:'🫡 Should I ask them out?', short:'romantic risk assessment',
+    intro:'Romantic activity detected. Please secure your dignity before proceeding.',
+    questions:[
+      {tag:'QUESTION 01 / MOTIVE CHECK',text:'What is actually driving this?',type:'choice',options:{like:['I GENUINELY LIKE THEM','positive',2],lonely:["I'M JUST LONELY",'negative',-3],curious:['I’M CURIOUS','chaos',0]}},
+      {tag:'QUESTION 02 / HUMAN INTERACTION',text:'Do you two actually talk regularly?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-3]}},
+      {tag:'QUESTION 03 / SIGNAL ANALYSIS',text:'Have they shown any interest in you?',type:'choice',options:{yes:['YES','positive',2],no:['NO','negative',-1],unclear:['UNCLEAR','chaos',0]}},
+      {tag:'QUESTION 04 / DIGNITY INSURANCE',text:'Could you handle a polite rejection without making things weird?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','red',-4]}}
+    ],
+    evaluate(a){
+      if(a[0]==='lonely'&&a[3]==='no') return {tone:'red',title:'THIS IS NOT A DATE. IT’S A DISTRACTION.',percent:22,message:'You are lonely, not necessarily romantically convinced, and a rejection would hit hard. Do not recruit another person to solve tonight’s loneliness.'};
+      if(a[0]==='like'&&a[1]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'ASK THEM OUT.',percent:91,message:'You like them, you already talk, there is some evidence of interest and you can survive hearing no. Keep it simple. No 47-slide presentation required.'};
+      if(a[1]==='no') return {tone:'yellow',title:'START WITH A CONVERSATION.',percent:61,message:'You can absolutely get to the asking-out stage. You are simply trying to skip Chapter 1 and submit the finale.'};
+      if(a[3]==='no') return {tone:'red',title:'PROTECT THE DIGNITY DEPARTMENT.',percent:31,message:'You are not ready for the uncertainty part yet. The Advisor is postponing the romantic launch until rejection stops feeling like a national emergency.'};
+      return {tone:'yellow',title:'POSSIBLE. DO NOT OVERCOMPLICATE IT.',percent:76,message:'There is enough here to make a move, but not enough to write the wedding speech. Ask clearly, keep it low-pressure and accept the answer.'};
+    }
+  },
+
+  post:{
+    label:'📱 Should I post this?', short:'social media tribunal',
+    intro:'A post is hovering over the publish button. The internet has been summoned as an unreliable witness.',
+    questions:[
+      {tag:'QUESTION 01 / ACTUAL TASTE',text:'Do you genuinely like the post yourself?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-3]}},
+      {tag:'QUESTION 02 / ZERO-LIKES TEST',text:'Would you still post it if nobody could like it?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-2]}},
+      {tag:'QUESTION 03 / FUTURE YOU',text:'Would future-you be comfortable seeing this again in six months?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','red',-4]}},
+      {tag:'QUESTION 04 / MYSTERIOUS PERSON DEPARTMENT',text:'Are you mainly posting because you want one specific person to see it?',type:'yesno',options:{yes:['YES','negative',-2],no:['NO','positive',2]}}
+    ],
+    evaluate(a){
+      if(a[0]==='no'||a[2]==='no') return {tone:'red',title:'DRAFT IT. DO NOT POST IT.',percent:27,message:'You do not even fully like the post and future-you has already asked for legal representation. The archive button is right there.'};
+      if(a[0]==='yes'&&a[1]==='yes'&&a[2]==='yes'&&a[3]==='no') return {tone:'green',title:'POST IT.',percent:95,message:'You like it. You would post it without applause. Future-you will not hunt you down. The Advisor has no remaining objections. Press the button.'};
+      if(a[3]==='yes') return {tone:'yellow',title:'POST WITH SELF-AWARENESS.',percent:64,message:'The post itself may be fine. The suspicious part is the tiny secret mission attached to it. Post because you like it, not because one person is supposed to decode the message.'};
+      return {tone:'yellow',title:'THE POST SURVIVES.',percent:78,message:'There is no obvious disaster here. You seem to like the post and have considered the consequences. The algorithm may now do whatever it wants.'};
+    }
+  },
+
+  miss:{
+    label:'😭 I miss my ex. What do I do?', short:'nostalgia investigation',
+    intro:'An emotional flashback has been reported. We are investigating whether it is about the person, the memories or simply being bored at 1:17 AM.',
+    questions:[
+      {tag:'QUESTION 01 / MEMORY DEPARTMENT',text:'What do you miss most?',type:'choice',options:{person:['THE PERSON','positive',2],life:['THE LIFE WE HAD','negative',-1],unknown:["I DON'T KNOW",'chaos',0]}},
+      {tag:'QUESTION 02 / RESTART PROTOCOL',text:'If they texted you right now, would you actually want to restart things?',type:'choice',options:{yes:['YES','positive',2],no:['NO','negative',-2],panic:['PANIC','chaos',0]}},
+      {tag:'QUESTION 03 / RELATIONSHIP AUDIT',text:'Was the relationship actually good for you?',type:'choice',options:{yes:['YES','positive',2],no:['NO','negative',-3],complicated:['IT’S COMPLICATED','chaos',-1]}},
+      {tag:'QUESTION 04 / CONTACT CHECK',text:'Would talking to them genuinely improve your life right now?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}}
+    ],
+    evaluate(a){
+      if(a[0]==='person'&&a[1]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'THE PLOT THICKENS.',percent:89,message:'You may have an actual case here. The Advisor has reluctantly upgraded this from “late-night emotional nonsense” to “worth thinking about.” Proceed carefully.'};
+      if(a[0]==='life'&&a[1]==='no'&&a[2]==='no') return {tone:'yellow',title:'OH.',percent:84,message:'You do not miss the relationship. You miss the version of your life that came with it. Your ex has officially been demoted to nostalgic character from Season 2.'};
+      if(a[2]==='no'&&a[3]==='no') return {tone:'red',title:'MISS THEM. DON’T REOPEN IT.',percent:25,message:'Missing someone is real. It is not automatically an instruction to contact them. The Advisor recommends letting the feeling exist without turning it into a text.'};
+      return {tone:'yellow',title:'EMOTIONAL WEATHER: UNCLEAR.',percent:59,message:'There are real feelings here, but the evidence is mixed. Give yourself time to separate missing the person from missing familiarity.'};
+    }
+  },
+
+  study:{
+    label:'🧠 Should I study or sleep?', short:'academic survival department',
+    intro:'Your brain has requested a decision between knowledge and unconsciousness.',
+    questions:[
+      {tag:'QUESTION 01 / ENERGY AUDIT',text:'Are you actually exhausted right now?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',0]}},
+      {tag:'QUESTION 02 / DEADLINE DEPARTMENT',text:'Is there something important due very soon?',type:'yesno',options:{yes:['YES','negative',-3],no:['NO','positive',2]}},
+      {tag:'QUESTION 03 / PRODUCTIVITY TEST',text:'Could you realistically focus for another useful study session?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}},
+      {tag:'QUESTION 04 / SLEEP VALUE',text:'Would sleeping now make you significantly more effective tomorrow?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-1]}}
+    ],
+    evaluate(a){
+      if(a[0]==='yes'&&a[3]==='yes') return {tone:'green',title:'GO TO BED.',percent:92,message:'Your brain is tired and tomorrow-you would benefit from sleep. Close the notes. The neurons have clocked out.'};
+      if(a[1]==='yes'&&a[2]==='yes'&&a[0]==='no') return {tone:'green',title:'STUDY FIRST.',percent:90,message:'There is a real deadline, you can still focus and sleep is not giving you a magical advantage. Do the work, then sleep like a responsible mammal.'};
+      if(a[2]==='no'&&a[1]==='no') return {tone:'yellow',title:'MINIMUM VIABLE STUDY.',percent:73,message:'You do not have a fire to put out and your brain is not cooperating. Do 20 focused minutes, then reassess instead of pretending six hours of staring counts.'};
+      return {tone:'yellow',title:'THE ANCIENT ANSWER: IT DEPENDS.',percent:56,message:'You have supplied evidence for both sides. Pick the option that protects tomorrow-you rather than whichever one feels easier for the next ten minutes.'};
+    }
+  },
+
+  trip:{
+    label:'✈️ Should I go on this trip?', short:'travel department',
+    intro:'A suspiciously fun opportunity has appeared. This time, every question is actually about the trip.',
+    questions:[
+      {tag:'QUESTION 01 / MONEY DEPARTMENT',text:'Can you afford the trip without wrecking your finances?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','red',-5]}},
+      {tag:'QUESTION 02 / WANT CHECK',text:'Do you actually want to go rather than just feeling pressured to go?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-3]}},
+      {tag:'QUESTION 03 / RESPONSIBILITY CHECK',text:'Do you have anything genuinely important that conflicts with the trip?',type:'yesno',options:{yes:['YES','negative',-4],no:['NO','positive',2]}},
+      {tag:'QUESTION 04 / CHAOS TOLERANCE',text:'Could you handle the trip going slightly wrong without the entire holiday collapsing?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}}
+    ],
+    evaluate(a){
+      if(a[0]==='no') return {tone:'red',title:'TRIP DENIED.',percent:18,message:'You want to go, perhaps, but your finances have filed an objection. The suitcase can return to the closet.'};
+      if(a[0]==='yes'&&a[1]==='yes'&&a[2]==='no'&&a[3]==='yes') return {tone:'green',title:'PACK THE BAG.',percent:94,message:'You can afford it. You want to go. Nothing important is stopping you. The Advisor has reviewed the evidence and, for once, found no obvious disaster. ✈️ TRIP APPROVED.'};
+      if(a[2]==='yes') return {tone:'yellow',title:'THE CALENDAR SAYS NO.',percent:32,message:'You may be financially ready, but something important is already on the calendar. The trip can be fun without being allowed to eat your responsibilities.'};
+      if(a[1]==='no') return {tone:'red',title:'YOU DON’T EVEN WANT TO GO.',percent:21,message:'This is not a travel decision. This is social pressure wearing a boarding pass. You are allowed to decline.'};
+      return {tone:'yellow',title:'TRIP: PROBABLY.',percent:77,message:'The essentials line up, but there is still some uncertainty. Go if the remaining details are manageable. Bring chargers. The Advisor refuses to be blamed for 4% battery.'};
+    }
+  },
+
+  bangs:{
+    label:'💇 Should I get bangs?', short:'forehead risk assessment',
+    intro:'A pair of scissors has entered a decision-making process. Your forehead has requested representation.',
+    questions:[
+      {tag:'QUESTION 01 / IMPULSE CONTROL',text:'Have you wanted bangs for more than a week?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','red',-3]}},
+      {tag:'QUESTION 02 / MAINTENANCE',text:'Have you actually looked at the maintenance they require?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}},
+      {tag:'QUESTION 03 / REGRET CHECK',text:'Would you still want them if nobody complimented them?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}},
+      {tag:'QUESTION 04 / GROW-OUT CONTRACT',text:'Could you live with the awkward grow-out period if you changed your mind?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-3]}}
+    ],
+    evaluate(a){
+      if(a[0]==='no') return {tone:'red',title:'STEP AWAY FROM THE SCISSORS.',percent:23,message:'This may be an impulse. Give the forehead at least 48 hours to review the proposal.'};
+      if(a[0]==='yes'&&a[1]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'FOREHEAD APPROVED.',percent:91,message:'You have wanted them, researched them, do not need compliments to justify them and can survive the grow-out. Your forehead has signed the waiver.'};
+      if(a[1]==='no'||a[3]==='no') return {tone:'yellow',title:'DO MORE RESEARCH.',percent:52,message:'The desire may be real, but the consequences are under-researched. Your bangs deserve a plan and your forehead deserves notice.'};
+      return {tone:'yellow',title:'THE FRINGE IS CALLING.',percent:75,message:'This is no longer a random midnight idea. If you still want them after checking the practical side, proceed carefully.'};
+    }
+  },
+
+  friend:{
+    label:'🗣️ Should I confront my friend?', short:'friendship court',
+    intro:'Friendship Court is now in session. The judge is a website and has no legal training.',
+    questions:[
+      {tag:'QUESTION 01 / EVIDENCE',text:'Did they actually do something that upset you?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-3]}},
+      {tag:'QUESTION 02 / COMMUNICATION',text:'Have you already talked to them about it?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',0]}},
+      {tag:'QUESTION 03 / FAIRNESS',text:'Are you willing to hear their side too?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','red',-4]}},
+      {tag:'QUESTION 04 / INTENTION',text:'Is your goal to solve the problem rather than win the argument?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-3]}}
+    ],
+    evaluate(a){
+      if(a[0]==='no') return {tone:'yellow',title:'COURT DISMISSED.',percent:67,message:'You may be upset, but there is no clear incident to confront. Investigate the feeling before opening Friendship Court.'};
+      if(a[0]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'HAVE THE CONVERSATION.',percent:92,message:'There is an actual issue, you are willing to hear them out and your goal is resolution. That is about as healthy as this website can manage.'};
+      if(a[2]==='no'||a[3]==='no') return {tone:'red',title:'POSTPONE THE TRIAL.',percent:29,message:'You are preparing to confront them without leaving room for their side. That is a prosecution, not a conversation.'};
+      if(a[1]==='no') return {tone:'yellow',title:'TALK BEFORE YOU CONFRONT.',percent:74,message:'You have a real issue, but the other person has not yet been given the chance to respond. Start there before escalating the situation.'};
+      return {tone:'yellow',title:'PROCEED, BUT LOWER THE WEAPONRY.',percent:78,message:'You have a legitimate issue and enough emotional control to discuss it. Keep the goal on solving the problem, not collecting courtroom points.'};
+    }
+  },
+
+  food:{
+    label:'🍕 Should I order food?', short:'financial gastronomy unit',
+    intro:'A hunger-related financial decision has been detected. The stomach will be permitted to testify.',
+    questions:[
+      {tag:'QUESTION 01 / HUNGER TEST',text:'Are you actually hungry?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-2]}},
+      {tag:'QUESTION 02 / HOME INVENTORY',text:'Do you already have enough food at home?',type:'yesno',options:{yes:['YES','negative',-2],no:['NO','positive',3]}},
+      {tag:'QUESTION 03 / WALLET CHECK',text:'Can you afford the order without regretting the money later?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','red',-4]}},
+      {tag:'QUESTION 04 / ACTUAL DESIRE',text:'Would you still want this food if the delivery app had not just sent you a notification?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-2]}}
+    ],
+    evaluate(a){
+      if(a[2]==='no') return {tone:'red',title:'THE WALLET HAS SPOKEN.',percent:17,message:'Hunger is real, but spending money you will regret is not the solution. Feed yourself from what you already have or find a cheaper option.'};
+      if(a[0]==='yes'&&a[1]==='no'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'ORDER IT.',percent:93,message:'You are hungry, there is no food at home, you can afford it and this is not just a notification-induced craving. The stomach has won its case.'};
+      if(a[0]==='no'&&a[3]==='no') return {tone:'red',title:'CLOSE THE DELIVERY APP.',percent:19,message:'You are not hungry and the notification is doing most of the convincing. The Advisor has saved you from ordering dinner because an app blinked at you.'};
+      if(a[1]==='yes') return {tone:'yellow',title:'THE KITCHEN HAS ENTERED EVIDENCE.',percent:61,message:'You can order if you genuinely want the meal, but there is already food at home. This is now a convenience decision, not an emergency.'};
+      return {tone:'yellow',title:'FEED YOURSELF, PROBABLY.',percent:79,message:'The hunger evidence is real and the purchase is affordable. Check what is at home first, then make the least annoying choice.'};
+    }
+  },
+
+  quit:{
+    label:'🏃 Should I quit this thing I committed to?', short:'commitment cancellation office',
+    intro:'You have arrived at the classic “I said yes before thinking” department.',
+    questions:[
+      {tag:'QUESTION 01 / COMMITMENT REVIEW',text:'Do you genuinely dislike doing this rather than simply being tired today?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',0]}},
+      {tag:'QUESTION 02 / REPAIR ATTEMPT',text:'Have you tried reducing the workload or changing the arrangement first?',type:'yesno',options:{yes:['YES','positive',2],no:['NO','negative',-1]}},
+      {tag:'QUESTION 03 / OPPORTUNITY COST',text:'Would leaving this free you for something you genuinely care about?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-1]}},
+      {tag:'QUESTION 04 / FUTURE TEST',text:'Would leaving feel like relief rather than something you would immediately regret?',type:'yesno',options:{yes:['YES','positive',3],no:['NO','negative',-3]}}
+    ],
+    evaluate(a){
+      if(a[0]==='yes'&&a[2]==='yes'&&a[3]==='yes') return {tone:'green',title:'YOU MAY ACTUALLY BE DONE.',percent:91,message:'You genuinely dislike it, you have something better to do and leaving would bring relief. Quit responsibly, communicate clearly and do not disappear into the bushes.'};
+      if(a[0]==='no'&&a[3]==='no') return {tone:'yellow',title:'DO NOT QUIT TONIGHT.',percent:71,message:'This sounds more like temporary exhaustion than a permanent decision. Change the workload or take a break before detonating the commitment.'};
+      if(a[1]==='no') return {tone:'yellow',title:'TRY THE SMALLER EXIT FIRST.',percent:64,message:'You may be ready to leave, but you have not tried changing the situation. Negotiate before you nuke it.'};
+      if(a[2]==='no') return {tone:'yellow',title:'WHAT ARE YOU QUITTING FOR?',percent:48,message:'You want out, but there is no clear destination on the other side. That does not mean stay forever. It means make the next move deliberately.'};
+      return {tone:'yellow',title:'EXIT WITH A PLAN.',percent:78,message:'There is a real case for leaving, but do it like a person with a plan rather than a person rage-closing seventeen browser tabs.'};
+    }
+  }
+};
+
+const scenarioOrder=['extext','skip','askout','clothing','post','miss','study','trip','bangs','friend','food','quit'];
+
+const scenarioGrid=$('#scenarioGrid');
+scenarioOrder.forEach(id=>{
+  const sc=scenarios[id];
+  const b=document.createElement('button'); b.className='scenario-card';
+  b.innerHTML=`${sc.label}<small>${sc.short}</small>`;
+  b.onclick=()=>startScenario(id); scenarioGrid.appendChild(b);
+});
+
+function showProcessing(done){
+  const overlay=$('#processing');
+  const lines=[
+    ['Checking common sense...','bad'],
+    ['Checking vibes...','done'],
+    ['Consulting absolutely nobody...','done'],
+    ['Comparing your answers...','done'],
+    ['Calling the imaginary committee...','bad']
+  ];
+  $('#processLines').innerHTML=lines.map((x,i)=>`<div class="process-line" data-i="${i}"><span>${x[0]}</span><span class="process-status">${i===0?'<span class="process-spinner"></span>':'WAITING'}</span></div>`).join('');
+  overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+  let i=0; clearInterval(processingTimer);
+  processingTimer=setInterval(()=>{
+    const el=document.querySelector(`.process-line[data-i="${i}"]`);
+    if(el){el.classList.add(lines[i][1]);el.querySelector('.process-status').innerHTML=lines[i][1]==='bad'?'FAILED':'DONE';}
+    i++;
+    if(i>=lines.length){clearInterval(processingTimer);setTimeout(()=>{overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');done();},550);}
+  },280);
+}
+
+function showCustomResult(text){
+  $('#questionBox').style.display='none';
+  $('#verdict').style.display='none';
+  let box=$('#customResult');
+  if(!box){
+    box=document.createElement('div'); box.id='customResult'; box.className='custom-result';
+    box.innerHTML='<h2>THE ADVISOR HAS REVIEWED YOUR CASE.</h2><p id="customResultText"></p><div class="fake-stats"><span>Research: 0%</span><span>Experience: 0%</span><span>Vibes: 63%</span><span>Made it up: 37%</span><span>TOTAL: 100%</span></div><div class="row" style="margin-top:14px"><button class="btn" id="customAgain">ASK ANOTHER TERRIBLE QUESTION</button></div>';
+    $('#case').appendChild(box);
+    $('#customAgain').onclick=()=>$('#againBtn').click();
+  }
+  $('#customResultText').textContent=text;
+  box.style.display='block';
+}
+
+function showResponse(text, sub=''){
+  answerArea.innerHTML=`<div class="response pop">${text}${sub?`<small>${sub}</small>`:''}</div>`;
+}
+
+function renderQuestion(node){
+  currentStep=node;
+  $('#questionText').textContent=node.text;
+  $('#questionBox .qtag').textContent=node.tag;
+  answerArea.innerHTML='';
+  const wrap=document.createElement('div'); wrap.className='dynamic-options';
+  Object.entries(node.options).forEach(([key,opt])=>{
+    const b=document.createElement('button');
+    b.className='option-btn';
+    b.dataset.tone=opt[1];
+    b.textContent=opt[0];
+    b.onclick=()=>answer(key);
+    wrap.appendChild(b);
+  });
+  answerArea.appendChild(wrap);
+  questionText.parentElement.classList.remove('enter');
+  void questionText.parentElement.offsetWidth;
+  questionText.parentElement.classList.add('enter');
+}
+
+function startScenario(id){
+  const popup=$('#popup'); if(popup) popup.style.display='none';
+  const processing=$('#processing'); if(processing){processing.classList.remove('show');processing.setAttribute('aria-hidden','true');}
+  activeScenario=id;
+  const sc=scenarios[id];
+  customDilemma=false;
+  const customBox=$('#customResult'); if(customBox) customBox.style.display='none';
+  $('#caseText').textContent=sc.intro;
+  $('#caseNumber').textContent='#'+String(++caseCounter).padStart(4,'0');
+  q=1; choice=null; clothingPath=null; pendingFinish=null; finalCheckIndex=0; finalScoreAdjust=0; currentStep=null; scenarioAnswers=[]; clearTimeout(answerTimer);
+  $('#questionBox').style.display='block';
+  $('#verdict').style.display='none';
+  answerArea.innerHTML='';
+  $('#sureBtn').textContent='NOT SATISFIED WITH VERDICT';
+  $('#sureBtn').disabled=false;
+  $('#sureBtn').classList.remove('danger');
+  $('#sureBtn').classList.add('yellow');
+  renderQuestion(sc.questions[0]);
+  caseSection.style.display='block'; home.style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function branchDecision(sc, answers, index){
+  const id=activeScenario;
+  const a=answers;
+  // The Advisor now uses actual decision branches: obvious deal-breakers end the case early,
+  // while genuinely ambiguous cases get one more useful question.
+  if(id==='clothing'){
+    if(index===0 && a[0]==='no') return {tone:'red',title:'GO EARN FIRST.',percent:4,message:"The outfit is lovely. Your bank account is not participating. The Advisor has reviewed your finances and would like you to obtain some money before obtaining the top. Please return when your wallet has re-entered the chat."};
+    if(index===1 && a[1]==='yes') return {tone:'yellow',title:'YOUR CLOSET ALREADY HAS ONE.',percent:42,message:"You have the money, congratulations. Unfortunately your wardrobe has produced Exhibit A. Unless this one does something dramatically different, let the existing clothes earn their rent first."};
+    if(index===2 && a[2]==='no') return {tone:'red',title:'DO NOT BUY THE CLOTH YOU WON’T WEAR.',percent:11,message:"You have money. You do not have a use for it. This is no longer a clothing purchase; it is a donation to the back of your closet. Case closed."};
+    if(index===2 && a[0]==='yes' && a[1]==='no' && a[2]==='yes') return {tone:'green',title:'PURCHASE AUTHORIZED.',percent:94,message:"You have the money, you do not own a suspiciously identical cousin and you will actually wear it. Against all odds, this is a responsible purchase. Please do not inform your bank account that we approved this."};
+  }
+  if(id==='extext' || id==='miss'){
+    if(index===0 && a[0]==='life') return null;
+    if(index===1 && a[1]==='no') return {tone:'yellow',title:'THAT IS NOSTALGIA, YOUR HONOUR.',percent:78,message:"You miss the memories, but you do not actually want the relationship back. Your ex has been moved from 'possible future' to 'historical figure'. Please do not reopen the museum."};
+    if(index===1 && a[1]==='panic') return {tone:'red',title:'PHONE DOWN. IMMEDIATELY.',percent:31,message:"PANIC is not a relationship strategy. Put the phone down before 1:17 AM You turns this into 14 paragraphs and a regret."};
+    if(index===2 && a[2]==='no') return {tone:'red',title:'MISS THEM. DO NOT REOPEN IT.',percent:22,message:"You can miss someone without inviting them back into your life. Feelings are allowed. Texting them is a separate administrative decision."};
+    if(index===3 && a[3]==='no') return {tone:'yellow',title:'THE HEART HAS BEEN HEARD.',percent:46,message:"You have feelings, but contact would not actually improve your life right now. The Advisor is prescribing absolutely nothing except time and perhaps a snack."};
+    if(index===3 && a[0]==='person' && a[1]==='yes' && a[2]==='yes' && a[3]==='yes') return {tone:'green',title:'THE PLOT THICKENS.',percent:89,message:"You miss the person, would genuinely want to restart, the relationship was good and contact could help. This has graduated from late-night nonsense to an actual conversation worth considering. Proceed like a human, not a Netflix protagonist."};
+  }
+  if(id==='skip'){
+    if(index===0 && a[0]==='yes') return null;
+    if(index===1 && a[1]==='no') return {tone:'red',title:'THE ATTENDANCE OFFICE SAYS NO.',percent:13,message:"You need the attendance and apparently today matters. Go to class. Your pillow will still be there later, waiting patiently like the accomplice it is."};
+    if(index===1 && a[0]==='no' && a[1]==='yes') return null;
+    if(index===2 && a[2]==='yes') return {tone:'yellow',title:'THE CLASS HAS EVIDENCE.',percent:35,message:"You can technically survive the absence, but you would miss something important. This is not a free day; this is a small academic robbery."};
+    if(index===2 && a[0]==='no' && a[1]==='yes' && a[2]==='no') return {tone:'green',title:'SKIP APPROVED.',percent:91,message:"Attendance is fine. You can survive the absence. Nothing important is being sacrificed. The Advisor has stamped the world's least official leave application."};
+  }
+  if(id==='askout'){
+    if(index===0 && a[0]==='lonely') return {tone:'red',title:'YOU NEED COMPANY, NOT A DATE.',percent:24,message:"You are lonely, which is real. But recruiting a romantic candidate to solve tonight's loneliness is how unnecessary plotlines begin. Call a friend. Eat something. Reassess tomorrow."};
+    if(index===1 && a[1]==='no') return {tone:'yellow',title:'START WITH HELLO.',percent:58,message:"You like them, excellent. You two barely talk, however. Asking them out immediately would be like submitting the final exam before attending the lecture. Start a conversation first."};
+    if(index===2 && a[2]==='no') return {tone:'yellow',title:'NO SIGNAL DETECTED.',percent:52,message:"There is no clear evidence of interest. That does not mean 'never', it means stop writing wedding speeches from a three-second eye contact incident."};
+    if(index===3 && a[3]==='no') return {tone:'red',title:'PROTECT THE DIGNITY DEPARTMENT.',percent:31,message:"You like them and there may be something there, but a rejection would currently feel like a national emergency. Wait until 'no' means 'okay, thanks' rather than 'I shall now move countries'."};
+    if(index===3 && a[0]==='like' && a[1]==='yes' && a[2]==='yes' && a[3]==='yes') return {tone:'green',title:'ASK THEM OUT.',percent:92,message:"You genuinely like them, you already talk, there is some evidence of interest and you can survive a no. Congratulations: you have permission to use words instead of overthinking."};
+  }
+  if(id==='post'){
+    if(index===0 && a[0]==='no') return {tone:'red',title:'THEN WHY ARE WE POSTING IT?',percent:8,message:"You don't even like the post. The Advisor refuses to participate in whatever this is. Save it, delete it, frame it, but do not publish a post you personally dislike."};
+    if(index===1 && a[1]==='no') return {tone:'yellow',title:'POSTING FOR THE AUDIENCE, ARE WE?',percent:49,message:"You like it, but without likes the whole operation suddenly looks less exciting. Give it one honest test: would you still be happy you posted it tomorrow?"};
+    if(index===2 && a[2]==='no') return {tone:'red',title:'FUTURE YOU HAS FILED A COMPLAINT.',percent:19,message:"Future-you is already uncomfortable and has requested that present-you stop pressing buttons. Put it in drafts. Future-you has enough problems."};
+    if(index===3 && a[3]==='yes') return {tone:'yellow',title:'POST IT FOR YOURSELF, NOT THEM.',percent:66,message:"The post may be perfectly fine. The tiny secret mission to make one specific person see it is where things get suspicious. Post because you like it, not because you are conducting a covert Instagram operation."};
+    if(index===3 && a[0]==='yes' && a[1]==='yes' && a[2]==='yes' && a[3]==='no') return {tone:'green',title:'POST APPROVED.',percent:95,message:"You like it, you would post it without applause, future-you won't hunt you down and nobody is being secretly targeted. The Advisor has no objections. Press publish and blame the algorithm."};
+  }
+  if(id==='study'){
+    if(index===0 && a[0]==='yes') return null;
+    if(index===1 && a[1]==='no' && a[0]==='yes') return {tone:'green',title:'SLEEP. THE NOTES WILL SURVIVE.',percent:94,message:"You're exhausted and there is no urgent deadline. Go to bed. The textbook has endured centuries of neglect and will bravely endure one more night."};
+    if(index===1 && a[1]==='yes' && a[0]==='yes') return null;
+    if(index===2 && a[2]==='no') return {tone:'green',title:'BED. NOW.',percent:91,message:"You are exhausted, the deadline is not screaming and your brain has stopped accepting information. Continuing would mostly be decorative studying."};
+    if(index===2 && a[0]==='no' && a[1]==='yes' && a[2]==='yes') return {tone:'green',title:'STUDY FIRST.',percent:90,message:"There is a real deadline and you can still focus. Do the work, then sleep. Tomorrow-you would like to remain on speaking terms with today-you."};
+    if(index===2 && a[0]==='no' && a[1]==='no' && a[2]==='yes') return {tone:'yellow',title:'DO A SHORT SESSION.',percent:76,message:"No academic fire, but you can still focus. Do a small useful session, then stop before 'five more minutes' becomes a four-hour documentary."};
+  }
+  if(id==='trip'){
+    if(index===0 && a[0]==='no') return {tone:'red',title:'GO EARN FIRST, THEN PACK.',percent:6,message:"The trip looks fun. Your finances have entered the chat wearing a police uniform. Do not fund a holiday by creating next month's emergency."};
+    if(index===1 && a[1]==='no') return {tone:'red',title:"YOU DON'T EVEN WANT TO GO.",percent:18,message:"This is not a travel decision. This is social pressure wearing a boarding pass. Decline politely and keep your suitcase where it belongs: in the closet."};
+    if(index===2 && a[2]==='yes') return {tone:'yellow',title:'THE CALENDAR HAS OBJECTED.',percent:34,message:"You can afford it and you want to go, but something genuinely important conflicts. The Advisor cannot legally defeat your responsibilities with a plane emoji."};
+    if(index===2 && a[0]==='yes' && a[1]==='yes' && a[2]==='no') return null;
+    if(index===3 && a[3]==='no') return {tone:'yellow',title:'TRIP APPROVED WITH CHAOS INSURANCE.',percent:73,message:"You can afford it, want it and nothing important is blocking it. You just don't trust the universe. Fair. Pack chargers, snacks and a backup plan."};
+    if(index===3 && a[0]==='yes' && a[1]==='yes' && a[2]==='no' && a[3]==='yes') return {tone:'green',title:'PACK THE BAG.',percent:96,message:"You can afford it. You want to go. Nothing important is stopping you and you can survive minor chaos. The Advisor has found no obvious disaster. ✈️ GO."};
+  }
+  if(id==='bangs'){
+    if(index===0 && a[0]==='no') return {tone:'red',title:'STEP AWAY FROM THE SCISSORS.',percent:23,message:"You wanted bangs for approximately seven minutes. This is not a haircut decision. This is an impulse wearing scissors."};
+    if(index===1 && a[1]==='no') return {tone:'yellow',title:'RESEARCH BEFORE FOREHEAD.',percent:48,message:"The desire may be real, but you haven't checked the maintenance. Your forehead would like a business plan before signing anything."};
+    if(index===2 && a[2]==='no') return {tone:'yellow',title:'YOU WANT THE COMPLIMENTS, NOT THE BANGS.',percent:51,message:"If nobody complimented them, you would not want them. That is useful information. The scissors may return to their natural habitat."};
+    if(index===3 && a[3]==='no') return {tone:'yellow',title:'THE GROW-OUT HAS VETO POWER.',percent:44,message:"You may love the idea, but you are not prepared for the awkward middle chapter. Wait until that sounds less terrifying."};
+    if(index===3 && a[0]==='yes' && a[1]==='yes' && a[2]==='yes' && a[3]==='yes') return {tone:'green',title:'FOREHEAD APPROVED.',percent:93,message:"You've wanted them, researched them, don't need applause and can survive the grow-out. Your forehead has signed the waiver. Proceed responsibly."};
+  }
+  if(id==='friend'){
+    if(index===0 && a[0]==='no') return {tone:'yellow',title:'COURT DISMISSED.',percent:68,message:"You are upset, but there is no actual incident on the evidence table. Do not put your friend on trial for a crime you cannot describe."};
+    if(index===1 && a[1]==='no') return null;
+    if(index===2 && a[2]==='no') return {tone:'red',title:'THAT IS A MONOLOGUE, NOT A CONVERSATION.',percent:27,message:"You want to confront them but have no interest in hearing their side. Friendship Court has rejected your opening statement."};
+    if(index===3 && a[3]==='no') return {tone:'red',title:'YOU WANT TO WIN, NOT SOLVE IT.',percent:25,message:"If the goal is victory, nobody is leaving Friendship Court happier. Cool the courtroom and come back when you actually want a solution."};
+    if(index===3 && a[0]==='yes' && a[2]==='yes' && a[3]==='yes') return {tone:'green',title:'HAVE THE CONVERSATION.',percent:94,message:"There is an actual issue, you can hear their side and you want a solution. Remarkably mature. The Advisor is almost uncomfortable with this much emotional competence."};
+  }
+  if(id==='food'){
+    if(index===0 && a[0]==='no') return {tone:'red',title:'CLOSE THE DELIVERY APP.',percent:14,message:"You are not hungry. The notification is simply yelling at you in an attractive font. Put the phone down before ₹700 of fries becomes your personality."};
+    if(index===1 && a[1]==='yes') return null;
+    if(index===2 && a[2]==='no') return {tone:'red',title:'THE WALLET HAS SPOKEN.',percent:9,message:"You are hungry. Unfortunately your wallet has submitted stronger evidence. Eat what you already have, find something cheaper or wait until your bank account stops looking haunted."};
+    if(index===3 && a[3]==='no') return {tone:'yellow',title:'THE APP IS MANIPULATING YOU.',percent:43,message:"You're hungry and can afford it, but you only want this because the app just waved it in your face. Check the kitchen before surrendering to push notifications."};
+    if(index===3 && a[0]==='yes' && a[1]==='no' && a[2]==='yes' && a[3]==='yes') return {tone:'green',title:'ORDER IT.',percent:95,message:"You're hungry, there is no food at home, you can afford it and the craving existed before the notification. The stomach has won its case. Congratulations to dinner."};
+  }
+  if(id==='quit'){
+    if(index===0 && a[0]==='no') return null;
+    if(index===1 && a[1]==='no') return null;
+    if(index===2 && a[2]==='yes') return null;
+    if(index===3 && a[3]==='yes') return {tone:'green',title:'YOU MAY ACTUALLY BE DONE.',percent:92,message:"You genuinely dislike it, you've considered alternatives, leaving frees you for something meaningful and relief is waiting on the other side. Quit responsibly. Do not simply vanish into the bushes."};
+    if(index===3 && a[3]==='no') return {tone:'yellow',title:'DO NOT QUIT IN A DRAMATIC FLUSH.',percent:62,message:"You are not convinced that leaving will feel right. Take a breath, adjust the arrangement and make the decision when the emotional smoke clears."};
+  }
+  return null;
+}
+
+function answer(key){
+  if(!currentStep) return;
+  const sc=scenarios[activeScenario];
+  const opt=currentStep.options[key];
+  if(!opt) return;
+  clearTimeout(answerTimer);
+  scenarioAnswers[currentQuestionIndex]=key;
+  showResponse(opt[0]+' — logged.', sc.questions[currentQuestionIndex].text);
+  dropJunk();
+  const earlyResult=branchDecision(sc,scenarioAnswers,currentQuestionIndex);
+  if(earlyResult){
+    answerTimer=setTimeout(()=>finishCase(earlyResult),700);
+    return;
+  }
+  currentQuestionIndex++;
+  q=currentQuestionIndex+1;
+  if(currentQuestionIndex < sc.questions.length){
+    answerTimer=setTimeout(()=>renderQuestion(sc.questions[currentQuestionIndex]),700);
+  }else{
+    answerTimer=setTimeout(()=>finishCase(sc.evaluate(scenarioAnswers)),900);
+  }
+}
+
+function finishCase(result){
+  const popup=$('#popup'); if(popup) popup.style.display='none';
+  $('#questionBox').style.display='none';
+  $('#verdict').style.display='none';
+  showProcessing(()=>{
+    $('#verdict').style.display='block';
+    $('#percent').textContent=result.percent+'%';
+    $('#chartFill').style.width='0%';
+    setTimeout(()=>$('#chartFill').style.width=result.percent+'%',80);
+    $('#verdictTitle').textContent=result.title;
+    $('#verdictText').textContent=result.message;
+    $('#verdict').dataset.tone=result.tone;
+    dropJunk();
+    playVerdictEffect(result);
+    setTimeout(()=>{ if(Math.random()<0.35) showPopup(); },2200);
+  });
+}
+
+function playVerdictEffect(result){
+  const kind = result.tone || 'caution';
+  const stamp=$('#outcomeStamp'), audit=$('#auditOverlay'), at=$('#auditText');
+  if(!stamp || !audit || !at) return;
+  document.body.classList.remove('outcome-approved','outcome-caution','outcome-denied','outcome-chaos');
+
+  // Every verdict gets its own ridiculous visual reaction.
+  if(kind==='chaos'){
+    document.body.classList.add('outcome-chaos');
+    stamp.className='outcome-stamp show chaos';
+    stamp.innerHTML='DECISION ERROR<small style="display:block;font:900 18px monospace;letter-spacing:0">THE ADVISOR HAS LOST CONFIDENCE<br>RECALCULATING...<br>NOPE.<br>STILL BAD.</small>';
+    setTimeout(()=>{stamp.className='outcome-stamp';document.body.classList.remove('outcome-chaos')},1700);
+    return;
+  }
+
+  document.body.classList.add('outcome-'+kind);
+  const labels={
+    approved:['APPROVED','This is surprisingly reasonable.'],
+    caution:['⚠ THE ADVISOR IS CONCERNED','Proceed with suspicious levels of caution.'],
+    denied:['DENIED','Please reconsider your life choices.']
+  };
+  const d=labels[kind]||labels.caution;
+
+  // Good decisions occasionally trigger the Advisor's completely unnecessary second opinion.
+  const shouldArgue = kind==='green' && ((caseCounter + result.percent) % 3 === 0);
+  if(shouldArgue){
+    audit.classList.add('show');
+    at.innerHTML='APPROVED.<span class="audit-small">This is surprisingly reasonable.</span>';
+    setTimeout(()=>{
+      at.innerHTML='WAIT.<span class="audit-small">You are asking an unqualified website for permission to make this decision.</span>';
+    },900);
+    setTimeout(()=>{
+      at.innerHTML='WHO GAVE YOU ACCESS TO THE INTERNET?<span class="audit-small">Rechecking the evidence...</span>';
+    },1800);
+    setTimeout(()=>{
+      audit.classList.remove('show');
+      stamp.className='outcome-stamp show approved';
+      stamp.textContent='APPROVED ANYWAY.';
+      setTimeout(()=>{stamp.className='outcome-stamp';document.body.classList.remove('outcome-approved')},950);
+    },2900);
+  }else{
+    stamp.className='outcome-stamp show '+(kind==='green'?'approved':kind==='yellow'?'caution':'denied');
+    stamp.textContent=d[0];
+    setTimeout(()=>{stamp.className='outcome-stamp';document.body.classList.remove('outcome-'+kind)},1000);
+  }
+}
+
+function resetToHome(){
+  clearTimeout(answerTimer);
+  clearInterval(processingTimer);
+  answerTimer=null;
+  processingTimer=null;
+  currentStep=null;
+  currentQuestionIndex=0;
+  scenarioAnswers=[];
+  pendingFinish=null;
+  customDilemma=false;
+  const processing=$('#processing');
+  if(processing){processing.classList.remove('show');processing.setAttribute('aria-hidden','true');}
+  const popup=$('#popup');
+  if(popup) popup.style.display='none';
+  const cover=$('#coverChaos');
+  if(cover){cover.classList.remove('show');cover.setAttribute('aria-hidden','true');}
+  const cb=$('#customResult');
+  if(cb) cb.style.display='none';
+  $('#questionBox').style.display='block';
+  $('#verdict').style.display='none';
+  answerArea.innerHTML='';
+  caseSection.style.display='none';
+  home.style.display='grid';
+  dilemma.value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+$('#againBtn').onclick=resetToHome;
+$('#backBtn').onclick=resetToHome;
+
+function triggerFine(){
+  const cover=$('#coverChaos');
+  cover.classList.add('show'); cover.setAttribute('aria-hidden','false');
+  cover.innerHTML='<div class="chaos-text">FINE.<br>DO WHATEVER<br>YOU WANT.<small>THE ADVISOR HAS LEFT THE BUILDING.</small></div>';
+  dropJunk();
+  setTimeout(()=>{cover.classList.remove('show');cover.setAttribute('aria-hidden','true');},5000);
+}
+$('#sureBtn').onclick=()=>{
+  $('#sureBtn').textContent='ARE YOU SURE?';
+  $('#sureBtn').classList.remove('yellow'); $('#sureBtn').classList.add('danger');
+  $('#sureBtn').onclick=()=>{
+    $('#sureBtn').textContent='ARE YOU REALLY SURE?';
+    $('#sureBtn').onclick=()=>{
+      $('#sureBtn').textContent='FINE. DO WHATEVER YOU WANT.';
+      $('#sureBtn').disabled=true;
+      $('#sureBtn').style.cursor='default';
+      setTimeout(triggerFine,250);
+    };
+  };
+};
+
+$('#submitBtn').onclick=()=>{
+  const popup=$('#popup'); if(popup) popup.style.display='none';
+  const text=dilemma.value.trim();
+  if(!text){showPopup(); dilemma.focus(); return;}
+  // Known phrase matching stays deliberately simple and fully client-side.
+  const lower=text.toLowerCase();
+  let id=null;
+  if(/ex|text.*former|message.*ex/.test(lower)) id=lower.includes('miss')?'miss':'extext';
+  else if(/skip.*class|class.*skip|attend.*class/.test(lower)) id='skip';
+  else if(/ask.*out|date.*them/.test(lower)) id='askout';
+  else if(/buy|purchase|shirt|top|dress/.test(lower)) id='clothing';
+  else if(/post|instagram|story|upload/.test(lower)) id='post';
+  else if(/study|sleep/.test(lower)) id='study';
+  else if(/trip|travel|vacation/.test(lower)) id='trip';
+  else if(/bangs|haircut/.test(lower)) id='bangs';
+  else if(/friend.*confront|confront.*friend/.test(lower)) id='friend';
+  else if(/food|hungry|pizza|order.*food/.test(lower)) id='food';
+  else if(/quit|leave.*commit|commitment/.test(lower)) id='quit';
+  if(id){startScenario(id);return;}
+  activeScenario='custom'; customDilemma=true;
+  $('#caseText').textContent='The database has no record of this specific disaster. The Advisor will now improvise with confidence.';
+  $('#caseNumber').textContent='#'+String(++caseCounter).padStart(4,'0');
+  $('#questionBox').style.display='none'; $('#verdict').style.display='none';
+  caseSection.style.display='block'; home.style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+  showProcessing(()=>showCustomResult(`Your dilemma — “${text}” — has been classified as: ${['probably fine','deeply unnecessary','above the Advisor\'s pay grade','a problem that could have been solved by sleeping'][Math.floor(Math.random()*4)]}. The official recommendation is to wait 17 minutes, drink water, and then make the decision anyway.`));
+};
+
+/* draggable cards with simple physical reaction */
+document.querySelectorAll('.drag').forEach(el=>{
+  let dragging=false, ox=0, oy=0, vx=0, vy=0, px=el.offsetLeft, py=el.offsetTop;
+  el.addEventListener('pointerdown',e=>{
+    dragging=true; el.setPointerCapture(e.pointerId);
+    ox=e.clientX-px; oy=e.clientY-py;
+    el.style.zIndex=5;
+  });
+  el.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    px=e.clientX-ox; py=e.clientY-oy;
+    px=Math.max(0,Math.min($('#junkbox').clientWidth-el.offsetWidth,px));
+    py=Math.max(0,Math.min($('#junkbox').clientHeight-el.offsetHeight,py));
+    el.style.left=px+'px'; el.style.top=py+'px';
+    vx=e.movementX; vy=e.movementY;
+  });
+  el.addEventListener('pointerup',()=>{
+    dragging=false;
+    // Give every release a tiny bit of ridiculous physics instead of freezing in place.
+    if(Math.abs(vx)+Math.abs(vy)<1){ vx = (Math.random()-.5)*3; vy = (Math.random()-.5)*3; }
+    const tick=()=>{
+      if(dragging)return;
+      vx*=.91; vy*=.91; px+=vx; py+=vy;
+      const box=$('#junkbox');
+      if(px<0||px>box.clientWidth-el.offsetWidth){vx*=-.75;px=Math.max(0,Math.min(box.clientWidth-el.offsetWidth,px))}
+      if(py<0||py>box.clientHeight-el.offsetHeight){vy*=-.75;py=Math.max(0,Math.min(box.clientHeight-el.offsetHeight,py))}
+      el.style.left=px+'px';el.style.top=py+'px';
+      if(Math.abs(vx)+Math.abs(vy)>.15) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+});
+
+/* random fake errors */
+setTimeout(showPopup,9000);
+setInterval(()=>{if(Math.random()<.22)showPopup()},28000);
+</script>
+
+<div id="outcomeStamp" class="outcome-stamp"></div>
+<div id="auditOverlay" class="audit-overlay"><div id="auditText" class="audit-text"></div></div>
+
+</body>
+</html>
