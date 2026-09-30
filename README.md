@@ -34,6 +34,4 @@ Download the repo and double-click `index.html`. No install needed.
 
 HTML · CSS · Vanilla JavaScript
 
----
 
-*Certified in: Nothing™. Do not make life decisions based on this website.*
